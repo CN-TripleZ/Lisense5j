@@ -1,7 +1,9 @@
 package com.license;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -10,11 +12,12 @@ import java.util.Properties;
  */
 public class License {
 
-	private final static String KEY_LICENSOR = "Licensor";
-	private final static String KEY_EXPIRATION = "Expiration";
-	private final static String KEY_SIGNATURE = "Signature";
-	private final static String KEY_IP = "IP Address";
-	private final static String KEY_MAC = "MAC Address";
+	public final static String LICENSE_PATH = "conf/license.lic";
+	public final static String KEY_LICENSOR = "Licensor";
+	public final static String KEY_EXPIRATION = "Expiration";
+	public final static String KEY_SIGNATURE = "Signature";
+	public final static String KEY_IP = "IP";
+	public final static String KEY_MAC = "MAC";
 
 	private Properties props = new Properties();
 
@@ -25,8 +28,12 @@ public class License {
 	public static License loadLicense() {
 		License license = newLicense();
 		Properties props = new Properties();
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		InputStream is = classLoader.getResourceAsStream("license.lic");
+		FileInputStream is = null;
+		try {
+			is = new FileInputStream(new File("conf/license.lic"));
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
 		try {
 			props.load(is);
 		} catch (IOException e) {
