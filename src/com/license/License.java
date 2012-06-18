@@ -1,5 +1,7 @@
 package com.license;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -14,14 +16,28 @@ public class License {
 	private final static String KEY_IP = "IP Address";
 	private final static String KEY_MAC = "MAC Address";
 
-	private Properties prop = new Properties();
+	private Properties props = new Properties();
+
+	public static License newLicense() {
+		return new License();
+	}
 
 	public static License loadLicense() {
-		return null;
+		License license = newLicense();
+		Properties props = new Properties();
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		InputStream is = classLoader.getResourceAsStream("license.lic");
+		try {
+			props.load(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		license.setProps(props);
+		return license;
 	}
 
 	public String getFeature(String paramString) {
-		return this.prop.getProperty(paramString);
+		return props.getProperty(paramString);
 	}
 
 	public String getExpiration() {
@@ -44,4 +60,12 @@ public class License {
 		return getFeature(KEY_MAC);
 	}
 
+	public void setProps(Properties props) {
+		this.props = props;
+	}
+	
+	public static void main(String[] args) {
+		License license = License.loadLicense();
+		System.out.println(license.getExpiration());
+	}
 }
