@@ -6,6 +6,8 @@ import java.util.Properties;
 import java.util.Scanner;
 
 import com.license.License;
+import com.license.SignatureUtil;
+import com.license.util.ByteHex;
 import com.license.util.KeyUtil;
 
 public class License5j {
@@ -26,8 +28,10 @@ public class License5j {
 		System.out.print("是否生成立License(y/n)?");
 		String gen = input.nextLine();
 		if(gen.equalsIgnoreCase("y")) {
-			KeyUtil.generateKey(user + Expiration);
-			String signText = KeyUtil.encrypt(user + Expiration);
+			KeyUtil keyUtil = new KeyUtil();
+			keyUtil.generator();
+			byte[] signByte = SignatureUtil.signature(keyUtil.getPriKey(), user + Expiration);
+			String signText = ByteHex.byte2hex(signByte);
 			Properties props = new Properties();
 			props.setProperty(License.KEY_LICENSOR, user);
 			props.setProperty(License.KEY_IP, ip);

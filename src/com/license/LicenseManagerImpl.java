@@ -1,9 +1,9 @@
 package com.license;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Date;
 
+import com.license.util.ByteHex;
 import com.license.util.DateUtil;
 import com.license.util.KeyUtil;
 
@@ -15,24 +15,19 @@ public class LicenseManagerImpl extends LicenseManager {
 
 	private License license;
 
-	protected LicenseManagerImpl() {
-		license = License.loadLicense();
+	protected LicenseManagerImpl(String licenseFile) {
+		license = License.loadLicense(licenseFile);
 	}
 
 	@Override
 	public boolean isValid() throws GeneralSecurityException {
 		String licensor = license.getLicensor();
 		String expiration = license.getExpiration();
-		byte[] pt = null;
-		try {
-			pt = KeyUtil.decrypt(license.getSignature());
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		String ptStr = new String(pt);
-		if (!ptStr.equals(licensor + expiration)) {
+		KeyUtil keyUtil = new KeyUtil();
+		keyUtil.generator();
+		boolean isValid = SignatureUtil.verify(keyUtil.getPubKey(), ByteHex.hex2byte(license.getSignature()), licensor + expiration);
+
+		if (!isValid) {
 			return false;
 		}
 		return daysLeft() > 0;

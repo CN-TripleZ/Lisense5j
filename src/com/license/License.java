@@ -25,12 +25,12 @@ public class License {
 		return new License();
 	}
 
-	public static License loadLicense() {
+	public static License loadLicense(String licenseFile) {
 		License license = newLicense();
 		Properties props = new Properties();
 		FileInputStream is = null;
 		try {
-			is = new FileInputStream(new File("conf/license.lic"));
+			is = new FileInputStream(new File(licenseFile));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
@@ -72,7 +72,7 @@ public class License {
 	}
 	
 	public static void main(String[] args) {
-		License license = License.loadLicense();
+		License license = License.loadLicense(LICENSE_PATH);
 		System.out.println(license.getExpiration());
 	}
 }

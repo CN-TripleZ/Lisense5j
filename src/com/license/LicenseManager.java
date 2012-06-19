@@ -8,10 +8,10 @@ import java.security.GeneralSecurityException;
  */
 public abstract class LicenseManager {
 
-	private static LicenseManager LICENSE_MANAGER = new LicenseManagerImpl();
+	//private static LicenseManager LICENSE_MANAGER = new LicenseManagerImpl();
 
-	public static LicenseManager getInstance() {
-		return LICENSE_MANAGER;
+	public static LicenseManager getInstance(String licenseFile) {
+		return new LicenseManagerImpl(licenseFile);
 	}
 
 	public abstract boolean isValid() throws GeneralSecurityException;
